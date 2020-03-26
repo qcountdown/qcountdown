@@ -164,10 +164,12 @@
             <div>
                 <button style="width: 50%;" class="button" onclick="copyUrlToClipboard('timer1')">Copy link</button>
                 <input style="width: 40%;" type="text" id="page-url" style="width: 100%;" placeholder="generatingPageUrl" disabled>
+                <br>
+                <span>The LINK is your timer data. Save the link, save all your timers.</span>
             </div>
             <div>
-                <button style="width: 50%;" class="button" onclick="addNewTimer()">+ Add countdown</button>
-                <a style="width: 40%; text-align: center;" href="whatsapp://send?text=The text to share!" data-action="share/whatsapp/share" class="button button--whatsapp" id="share-button--whatsapp">Share on WhatsApp</a>
+                <button style="width: 100%;" class="button button--yellow" onclick="addNewTimer()">+ Add new countdown</button>
+                <!-- <a style="width: 40%; text-align: center;" href="whatsapp://send?text=The text to share!" data-action="share/whatsapp/share" class="button button--whatsapp" id="share-button--whatsapp">Share on WhatsApp</a> -->
                 
             </div>
         </div>
@@ -251,12 +253,9 @@
             },
             updateInterval
         );
-
-
         function updateShareButton(){
-            //
-            document.getElementById('share-button--whatsapp').href = encodeURI('whatsapp://send?text=I am sharing my timers \n '+ document.getElementById('page-url').value);
-            console.log(document.getElementById('page-url').value);
+            // document.getElementById('share-button--whatsapp').href = encodeURI('whatsapp://send?text=I am sharing my timers \n '+ document.getElementById('page-url').value);
+            // console.log(document.getElementById('page-url').value);
         }
 
 
