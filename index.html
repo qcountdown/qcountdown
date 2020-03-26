@@ -255,7 +255,8 @@
 
         function updateShareButton(){
             //
-            document.getElementById('share-button--whatsapp').href = 'whatsapp://send?text=I am sharing my timers \n '+ document.getElementById('page-url').value;
+            document.getElementById('share-button--whatsapp').href = encodeURI('whatsapp://send?text=I am sharing my timers \n '+ document.getElementById('page-url').value);
+            console.log(document.getElementById('page-url').value);
         }
 
 
