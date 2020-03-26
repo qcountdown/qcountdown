@@ -11,34 +11,49 @@
     <style>
         *{box-sizing: border-box;}
         body{
-            background-color: #F2F6F9;
-            color: #345181;
-            font-family: monospace;
+            padding: 0.25 1rem 0.25 1rem;
+            color: #6c757d;
             font-size: 1.2em;
             line-height: 1.7em;
+
+            background-color: #FFFFFF;
+            
         }
         .container{
             max-width: 650px;
             margin: auto;
         }
         .timer{
-            box-shadow: 0 0 16px 0 #C7D1E8;
-            background-color: #fff;
+            border-radius: 13px;
+            border-radius: 13px;
+            background: #ffffff;
+            box-shadow:  9px 9px 15px #d0d0d0, 
+                        -9px -9px 15px #ffffff;
+            color: #000;
             padding: 0.5rem 1rem 0.5rem 1rem;
-            border-radius: 0.5rem;
+            border-radius: 0rem 2rem 0.25rem 0rem;
             margin-top: 1rem;
-            border-top: 5px solid #0033ff;
         }
         .timer-actions{
-            background-color: #ddd;
+            /* background-color: #FAFAFB; */
             border-radius: 0.5rem;
             overflow: auto;
         }
         .timer-display{
-            
+            font-family: sans-serif;
+            font-size: 2rem;
+            font-weight: 300;
         }
         .timer-title-container{
-            color: #0033FF;
+            
+        }
+        .timer-title{
+            font-family: sans-serif;
+            color: #00BC68;
+        }
+        .timer-target-display{
+            background-color: 00BC68;
+            color: #fff;
         }
         .timer-progressbar{
             display: none;
@@ -48,24 +63,48 @@
             border: 1px solid #aaa;
         }
         .timer--expired{
-            background-color: #00000030;
+            background-color: #fff;
+        }
+        .timer--expired .timer-title{
+            font-family: sans-serif;
+            color: #ff073a;
+        }
+        .timer--expired .timer-target-display{
+            background-color: #ff073a;
             color: #fff;
         }
+        .timer--expired .timer-display{
+            color: #ff073a;
+        }
+
         .timer--new{
-            background-color: #0033ff;
-            color: #fff;
+            background-color: #E4F4E8;
+            color: #28a745;
         }
         .timer--new .timer-title-container{
-            color: #fff;
+            color: #28a745;
         }
         .row{
             display: block;
         }
         .app-title{
-            color: #0033FF;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            font-size: 2rem;
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+            color: #000;
+            font-weight: bold;
         }
         input{
-            width: 100%;
+            /* width: 100%; */
+            border: none;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #00bc68;
+        }
+        input:disabled{
+            background-color: #fff;
+            border-bottom: 2px solid #4285F4;
         }
         .hidden{
             display: none;
@@ -82,7 +121,7 @@
             margin: 5px;
             padding-left: 1rem;
             padding-right: 1rem;
-            border-radius: 0.5rem;
+            font-size: 1rem;
         }
         .button:hover {
             opacity: 0.8;
@@ -106,8 +145,8 @@
             text-decoration: none;
             background-color: #00c851;
             color: #fff;
-            padding: 0.35em 1em;
-            display: inline-block;
+            font-size: 1rem;
+            /* display: inline-block; */
         }
         .right{
             float: right;
@@ -118,21 +157,22 @@
 
 <body>
     <div class="container">
+        <div class="row">
+            <span class="app-title">qCountdown.github.io</span>
+        </div>
         <div class="row timer app-header">
             <div>
-                <h1 class="app-title">qCountdown.github.io</h1>
-				<h3 class="app-title" style="color: #f00">The time input is horribly broken. I have no intention to fix it this week.</h3>
+                
                 <input type="text" id="page-url" style="width: 100%;" placeholder="generatingPageUrl" disabled><br>
             </div>
             <div>
                 <button class="button" onclick="copyUrlToClipboard('timer1')">Copy link to clipboard</button>
-                <!-- //ToDo: whatsapp button -->
                 <a href="whatsapp://send?text=The text to share!" data-action="share/whatsapp/share" class="button button--whatsapp" id="share-button--whatsapp">Share on WhatsApp</a>
 
             </div>
-        </div>
-        <div class="row timer actionbar">
-            <button class="button" onclick="addNewTimer()">+ Add new countdown timer</button>
+            <div>
+                <button class="button" onclick="addNewTimer()">+ Add new countdown timer</button>
+            </div>
         </div>
         <div class="row timer timer--new hidden" id="timer-new">
             <div class="row timer-title-container">
@@ -175,10 +215,19 @@
     <div class="container" id="timer-container">
 
     <script>
+        /*
+        DateTime convention:
+            1. Maintain pure month(index1) in dateTimeString, url and html inputs
+                Strictly maintain the true value in dateTimeString
+            2. When writing to dateTimeOBJECT, decrement it by one.
+            3. When reading from dateTimeOBJECT, increment it by one.
+        */
         // http://127.0.0.1:5500/index.html?data=[%22papel01503020300320%22,%22something%20else%2001503020210320%22]
         
         //set constants
-        const updateInterval = 1000;
+        const updateInterval = 500;
+        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var counter = 0;
         // var timers = ['papel01503020210320','something else 01503020210320'];
         var timers=['22papel01503020300320'];
@@ -286,49 +335,72 @@
                 timerIds.push(timerId);
                 let timerTitle = timerData.slice(0, -14);
                 //append timer to dom
-                appendTimerToDom(timerId,timerTitle,timerData.slice(-14))
+                appendTimerToDom(timerId,timerTitle,timerData.slice(-14));
+                
             });
         }
         function appendTimerToDom(timerId,timerTitle,dateTimeString){
-            let timerDivHtml = '<div class="row timer" id="'+timerId+'"><div class="row timer-title-container">		<span class="timer-title" id="'+timerId+'-title">			'+timerTitle+'		</span>	</div>	<div class="row timer-display" id="'+timerId+'--display">		<span>Time Left:</span>		<span id="'+timerId+'-display--text">Processing...</span> <br><div class="timer-progressbar" id="'+timerId+'-progressbar"></div>	</div>	<div class="row hidden timer-input-display" id="'+timerId+'--input">		<input type="time" id="'+timerId+'-time--input" step="1">		<input type="date" id="'+timerId+'-date--input">	</div>	<div class="row timer-actions">		<button class="button" id="'+timerId+'-button--edit" onclick="editTimer(\''+timerId+'\')">Edit</button>		<button class="button button--green" id="'+timerId+'-button--save" onclick="saveEditedTimer(\''+timerId+'\')" disabled>Save</button> <button class="button hidden right" id="'+timerId+'-button--canceldelete" onclick="cancelDeleteTimer(\''+timerId+'\')">Cancel Delete</button>	<button class="button button--yellow hidden right" id="'+timerId+'-button--confirmdelete" onclick="confirmDeleteTimer(\''+timerId+'\')">Confirm Delete</button>	<button class="button button--red right" id="'+timerId+'-button--delete" onclick="deleteTimer(\''+timerId+'\')">Delete</button>	</div></div>';
+            let timerDivHtml = '<div class="row timer" id="'+timerId+'"><div class="row timer-title-container">		<span class="timer-title" id="'+timerId+'-title">			'+timerTitle+'		</span>	</div><div class="row"><span class="timer-target-display" id="'+timerId+'-target--display">Loading target...</span></div>	<div class="row timer-display" id="'+timerId+'--display"> <span id="'+timerId+'-display--text">Processing...</span> <br><div class="timer-progressbar" id="'+timerId+'-progressbar"></div>	</div>	<div class="row hidden timer-input-display" id="'+timerId+'--input">		<input type="time" id="'+timerId+'-time--input" step="1">		<input type="date" id="'+timerId+'-date--input">	</div>	<div class="row timer-actions">		<button class="button right" id="'+timerId+'-button--edit" onclick="editTimer(\''+timerId+'\')">Edit</button>		<button class="button button--green right" id="'+timerId+'-button--save" onclick="saveEditedTimer(\''+timerId+'\')" disabled>Save</button> <button class="button hidden right" id="'+timerId+'-button--canceldelete" onclick="cancelDeleteTimer(\''+timerId+'\')">Cancel Delete</button>	<button class="button button--yellow hidden right" id="'+timerId+'-button--confirmdelete" onclick="confirmDeleteTimer(\''+timerId+'\')">Confirm Delete</button>	<button class="button button--red right" id="'+timerId+'-button--delete" onclick="deleteTimer(\''+timerId+'\')">Delete</button>	</div></div>';
             let timerDomDiv = document.createElement('div');
             timerDomDiv.innerHTML=timerDivHtml;
             var timerContainer = document.getElementById('timer-container');
             timerContainer.appendChild(timerDomDiv);
             //set timer input data fields
-            setInputDateTime(timerId,generateDateTimeObject(dateTimeString));
+            let dateTimeObject = generateDateTimeObject(dateTimeString);
+            setInputDateTime(timerId,dateTimeObject);
+            setTimerTargetDisplay(timerId,dateTimeObject);
+        }
+        function setTimerTargetDisplay(timerId,dateTimeObject){
+            let dateString = days[ dateTimeObject.getDay() ]
+                            + ' ' + dateTimeObject.getDate()
+                            + ' ' + months[ dateTimeObject.getMonth() ]
+                            + ' ' + dateTimeObject.getFullYear()
+                            + ' ' + formatAMPM(dateTimeObject);
+            document.getElementById(timerId+'-target--display').innerHTML=dateString;
+        }
+
+        function formatAMPM(dateTimeObject) {
+            let hours = dateTimeObject.getHours();
+            let minutes = dateTimeObject.getMinutes();
+            let ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            let strTime = hours + ':' + minutes + ' ' + ampm;
+            return strTime;
         }
 
 
         function generateDateTimeObject(dateTimeString){
             //string format: hhmmssyyyyMMdd
-            //indexes(position) hh:0 mm:2 ss:4 yyyy:6 MM:10 dd:12
+            //indexes(starting-position) hh:0 mm:2 ss:4 yyyy:6 MM:10 dd:12
             if(dateTimeString.length<14){
                 alert('invalid inputs');
             }else{
                 //increment month by 1 since it's an old pita
                 //date constructor uses month with index 0
-                let month = parseInt(dateTimeString.substr(2,2))+1;
+                let monthFromString = parseInt(dateTimeString.substr(10,2));
                 //using constructor: new Date(year,month,date,hour,minute,second)
-                return new Date(dateTimeString.substr(6,4),
-                                dateTimeString.substr(10,2),
+                let dateTimeObject = new Date(dateTimeString.substr(6,4),
+                                // dateTimeString.substr(10,2),
+                                monthFromString-1,
                                 dateTimeString.substr(12,2),
                                 dateTimeString.substr(0,2),
-                                month,
+                                dateTimeString.substr(2,2),
                                 dateTimeString.substr(4,2)
                                 );
-                console.log(obj);
+                return dateTimeObject;
             }
         }
 
 
         function generateDateTimeString(dateTimeObject){
-            let hh = ('0' + Math.floor((dateTimeObject % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).slice(-2);
-            let mm = ('0' + Math.floor((dateTimeObject % (1000 * 60 * 60)) / (1000 * 60))).slice(-2);
-            let ss = ('0' + Math.floor((dateTimeObject % (1000 * 60)) / 1000)).slice(-2);
+            let hh = ('0' + dateTimeObject.getHours()).slice(-2);
+            let mm = ('0' + dateTimeObject.getMinutes()).slice(-2);
+            let ss = ('0' + dateTimeObject.getSeconds()).slice(-2);
 
             let yyyy = ('0' + dateTimeObject.getFullYear()).slice(-4);
-            let MM = ('0' + (dateTimeObject.getMonth())).slice(-2);
+            let MM = ('0' + (dateTimeObject.getMonth()+1)).slice(-2);
             let dd = ('0' + dateTimeObject.getDate()).slice(-2);
             
             return hh+mm+ss+yyyy+MM+dd;
@@ -345,21 +417,18 @@
         }
 
 
-        function setInputDateTime(timerId,dateTimeValue){
-            console.log(dateTimeValue);
-            console.log(dateTimeValue.getHours());
-            //ToDo: set to dynamic date
+        function setInputDateTime(timerId,dateTimeObject){
             let timeInputId=timerId+'-time--input';
             let dateInputId=timerId+'-date--input';
-            let hh = ('0' + Math.floor((dateTimeValue % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).slice(-2);
-            let mm = ('0' + Math.floor((dateTimeValue % (1000 * 60 * 60)) / (1000 * 60))).slice(-2);
-            let ss = ('0' + Math.floor((dateTimeValue % (1000 * 60)) / 1000)).slice(-2);
 
-            let yyyy = ('0' + dateTimeValue.getFullYear()).slice(-4);
-            let MM = ('0' + (dateTimeValue.getMonth()+1)).slice(-2);
-            let dd = ('0' + dateTimeValue.getDate()).slice(-2);
+            let hh = ('0' + dateTimeObject.getHours()).slice(-2);
+            let mm = ('0' + dateTimeObject.getMinutes()).slice(-2);
+            let ss = ('0' + dateTimeObject.getSeconds()).slice(-2);
+
+            let yyyy = ('0000' + dateTimeObject.getFullYear()).slice(-4);
+            let MM = ('0' + (dateTimeObject.getMonth()+1)).slice(-2);
+            let dd = ('0' + dateTimeObject.getDate()).slice(-2);
             
-            // document.getElementById(timeInputId).value
             //time format: HH:mm:ss
             document.getElementById(timeInputId).value = hh+':'+mm+':'+ss;
             //date format: yyyy:MM:dd
@@ -395,7 +464,6 @@
 
 
         function updateCountdownById(timerId){
-            // console.log('updating:'+timerId);
             let countDownDateTime = getInputDateTime(timerId);
             let timerDisplayId = timerId+'-display--text';
             //get current date and time
@@ -440,7 +508,6 @@
             deleteTimerFromArray(timerId);
             // Remove timer from dom
             document.getElementById(timerId).remove();
-            console.log(timers);
             //Update url
             //reinitialize app
             updateWindowUrl();
@@ -456,7 +523,6 @@
 
             // Check if timer exists in timers array and remove it
             timers = timers.filter(arrayStr => arrayStr.slice(0, -14).trim() !== timerTitle);
-            console.log(timers);
             return index;
         }
 
@@ -467,7 +533,6 @@
             //get input datetime and convert it to dateTimeString
             let dateTimeObject=getInputDateTime(timerId);
             let dateTimeString = generateDateTimeString(dateTimeObject);
-            
             //add input timer data to timers array            
             //ToDo: add validation for dateTimeString
             let timerArrayString = document.getElementById(timerId+'-title').innerHTML.trim()+dateTimeString;
@@ -491,10 +556,6 @@
 
         function saveNewTimer(){
             document.getElementById('timer-new').classList.add("hidden");
-            //ToDo: add stuff to data array
-            //timer-new-title--input
-            //timer-new-time--input
-            //timer-new-date--input
             let timerId = 'timer-new';
             
             //get input datetime and convert it to dateTimeString
@@ -505,7 +566,6 @@
             //ToDo: add validation for dateTimeString
             let timerArrayString = document.getElementById('timer-new-title--input').value+dateTimeString;
             timers.push(timerArrayString);
-            console.log(timers);
 
             //update url using updated timers array
             updateWindowUrl();
