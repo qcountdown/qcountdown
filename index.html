@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Timers</title>
+    <title>qCountdown</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -121,6 +121,7 @@
         <div class="row timer app-header">
             <div>
                 <h1 class="app-title">qCountdown.github.io</h1>
+				<h3 class="app-title" style="color: #f00">The time input is horribly broken. I have no intention to fix it this week.</h3>
                 <input type="text" id="page-url" style="width: 100%;" placeholder="generatingPageUrl" disabled><br>
             </div>
             <div>
@@ -140,7 +141,7 @@
                 </span>
             </div>
             <div class="row" id="timer-new--input">
-                <input type="text" id="timer-new-title--input" placeholder="Timer title" style="display: block;width: 100%;">
+                <input type="text" pattern="[a-zA-Z0-9\s]+" id="timer-new-title--input" placeholder="Timer title" style="display: block;width: 100%;">
                 <input type="time" id="timer-new-time--input" step="1">
                 <input type="date" id="timer-new-date--input">
             </div>
@@ -305,12 +306,15 @@
             if(dateTimeString.length<14){
                 alert('invalid inputs');
             }else{
+                //increment month by 1 since it's an old pita
+                //date constructor uses month with index 0
+                let month = parseInt(dateTimeString.substr(2,2))+1;
                 //using constructor: new Date(year,month,date,hour,minute,second)
                 return new Date(dateTimeString.substr(6,4),
                                 dateTimeString.substr(10,2),
                                 dateTimeString.substr(12,2),
                                 dateTimeString.substr(0,2),
-                                dateTimeString.substr(2,2),
+                                month,
                                 dateTimeString.substr(4,2)
                                 );
                 console.log(obj);
@@ -324,7 +328,7 @@
             let ss = ('0' + Math.floor((dateTimeObject % (1000 * 60)) / 1000)).slice(-2);
 
             let yyyy = ('0' + dateTimeObject.getFullYear()).slice(-4);
-            let MM = ('0' + (dateTimeObject.getMonth()+1)).slice(-2);
+            let MM = ('0' + (dateTimeObject.getMonth())).slice(-2);
             let dd = ('0' + dateTimeObject.getDate()).slice(-2);
             
             return hh+mm+ss+yyyy+MM+dd;
@@ -342,6 +346,9 @@
 
 
         function setInputDateTime(timerId,dateTimeValue){
+            console.log(dateTimeValue);
+            console.log(dateTimeValue.getHours());
+            alert('printed');
             //ToDo: set to dynamic date
             let timeInputId=timerId+'-time--input';
             let dateInputId=timerId+'-date--input';
@@ -466,8 +473,6 @@
             //ToDo: add validation for dateTimeString
             let timerArrayString = document.getElementById(timerId+'-title').innerHTML.trim()+dateTimeString;
             //insert newly edited timer at its original index
-            console.log(index);
-            console.log(timers);
             timers.splice(index,0,timerArrayString);
             updateWindowUrl();
             initializeApp();
