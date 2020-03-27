@@ -15,20 +15,17 @@
             font-size: 1rem;
             line-height: 1.7em;
 
-            background-color: #FFFFFF;
-            
+            background-color: #EBEFF0;
+            color: #000;
         }
         .container{
             max-width: 650px;
             margin: auto;
         }
         .timer{
-            border-radius: 13px;
-            border-radius: 13px;
-            background: #ffffff;
-            box-shadow:  4px 4px 8px #d0d0d0, 
-                        -4px -4px 8px #f0f0f0;
-            color: #000;
+            background-color: #ffffff;
+            box-shadow:  2px 2px 8px #aaa, 
+                        -2px -2px 8px #f0f0f0;
             padding: 0.5rem 1rem 0.5rem 1rem;
             border-radius: 0rem 2rem 0.25rem 0rem;
             margin-top: 1rem;
@@ -54,15 +51,8 @@
             border:1px solid #00BC68;
             color: #00BC68;
         }
-        .timer-progressbar{
-            display: none;
-            height: 1rem;
-            background-color: #fff;
-            border-radius: 0.25rem;
-            border: 1px solid #aaa;
-        }
         .timer--expired{
-            background-color: #fff;
+            background-color: #D0D5D8;
         }
         .timer--expired .timer-title{
             font-family: sans-serif;
@@ -77,7 +67,7 @@
         }
 
         .timer--new{
-            background-color: #E4F4E8;
+            background-color: #00BC6820;
             color: #28a745;
         }
         .timer--new .timer-title-container{
@@ -102,7 +92,6 @@
             border-bottom: 2px solid #00bc68;
         }
         input:disabled{
-            background-color: #fff;
             border-bottom: 2px solid #4285F4;
         }
         .hidden{
@@ -136,7 +125,7 @@
             color: #fff;
         }
         .button--yellow {
-            background-color: #FFBB33;
+            background-color: rgb(235, 156, 0);
             color: #fff;
         }
         .button--whatsapp{
@@ -149,6 +138,19 @@
         }
         .right{
             float: right;
+        }
+        @media (prefers-color-scheme: dark) {
+            body{
+                background-color: #1d1d1d;
+                color: #ffffffc0;
+            }
+            .timer{
+                box-shadow: none;
+                background-color: #2c2c2c;
+            }
+            .app-title{
+                color: #fff;
+            }
         }
 
     </style>
@@ -214,18 +216,19 @@
 
     <script>
         /*
-        DateTime convention:
-            1. Maintain pure month(index1) in dateTimeString, url and html inputs
-                Strictly maintain the true value in dateTimeString
-            2. When writing to dateTimeOBJECT, decrement it by one.
-            3. When reading from dateTimeOBJECT, increment it by one.
+            DateTime handling convention:
+                1. Maintain pure month(index1) in dateTimeString, url and html inputs
+                    Strictly maintain the true value in dateTimeString
+                2. When writing to dateTimeOBJECT, decrement it by one.
+                3. When reading from dateTimeOBJECT, increment it by one.
         */
-        // http://127.0.0.1:5500/index.html?data=[%22papel01503020300320%22,%22something%20else%2001503020210320%22]
         
         //set constants
-        const updateInterval = 500;
+        const updateInterval = 1000;
         const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
         const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const modes = {EDIT:'edit', DELETE:'delete',DEFAULT:'default'};
+
         var counter = 0;
         // var timers = ['papel01503020210320','something else 01503020210320'];
         var timers=[];
@@ -237,6 +240,9 @@
             generateDom();
             updateWindowUrl();
             updateShareButton();
+            
+            //manually update countdowns immediately on page load
+            updateAllCountdowns();
         }
 
         initializeApp();
@@ -245,14 +251,12 @@
         //automated refresh function
         window.setInterval(
             function(){
-                updateAllCountdowns();
-
-                //ToDo: remove debug stuff
-                
-            },
-            updateInterval
+                    updateAllCountdowns();
+                }
+            , updateInterval
         );
         function updateShareButton(){
+            //Removed button because whatsapp forcibli decodes shared  url making it unusable
             // document.getElementById('share-button--whatsapp').href = encodeURI('whatsapp://send?text=I am sharing my timers \n '+ document.getElementById('page-url').value);
             // console.log(document.getElementById('page-url').value);
         }
@@ -298,7 +302,7 @@
         //extract timer-array data array from url
         function extractTimersFromUrlData(){
             timers=JSON.parse(decodeURIComponent(getQueryVariable('data')));
-            // When no data is found in json, timers variable gets set to boolean value false.
+            // Edge case: When no data is found in json, timers variable gets set to boolean value false.
             // In this case, reset it to an empty array
             if(typeof timers ==='boolean'){
                 timers=[];
@@ -335,8 +339,10 @@
                 
             });
         }
+
+
         function appendTimerToDom(timerId,timerTitle,dateTimeString){
-            let timerDivHtml = '<div class="row timer" id="'+timerId+'"><div class="row timer-title-container">		<span class="timer-title" id="'+timerId+'-title">			'+timerTitle+'		</span>	</div><div class="row"><span class="timer-target-display" id="'+timerId+'-target--display">Loading target...</span></div>	<div class="row timer-display" id="'+timerId+'--display"> <span id="'+timerId+'-display--text">Processing...</span> <br><div class="timer-progressbar" id="'+timerId+'-progressbar"></div>	</div>	<div class="row hidden timer-input-display" id="'+timerId+'--input">		<input type="time" id="'+timerId+'-time--input" step="1">		<input type="date" id="'+timerId+'-date--input">	</div>	<div class="row timer-actions">		<button class="button right" id="'+timerId+'-button--edit" onclick="editTimer(\''+timerId+'\')">Edit</button>		<button class="button button--green right" id="'+timerId+'-button--save" onclick="saveEditedTimer(\''+timerId+'\')" disabled>Save</button> <button class="button hidden right" id="'+timerId+'-button--canceldelete" onclick="cancelDeleteTimer(\''+timerId+'\')">Cancel Delete</button>	<button class="button button--yellow hidden right" id="'+timerId+'-button--confirmdelete" onclick="confirmDeleteTimer(\''+timerId+'\')">Confirm Delete</button>	<button class="button button--red right" id="'+timerId+'-button--delete" onclick="deleteTimer(\''+timerId+'\')">Delete</button>	</div></div>';
+            let timerDivHtml = '<div class="row timer" id="'+timerId+'"><div class="row timer-title-container">		<span class="timer-title" id="'+timerId+'-title">			'+timerTitle+'		</span>	</div><div class="row"><span class="timer-target-display" id="'+timerId+'-target--display">Loading target...</span></div>	<div class="row timer-display" id="'+timerId+'--display"> <span id="'+timerId+'-display--text">Processing...</span> <br><div class="timer-progressbar" id="'+timerId+'-progressbar"></div>	</div>	<div class="row hidden timer-input-display" id="'+timerId+'--input">		<input type="time" id="'+timerId+'-time--input" step="1">		<input type="date" id="'+timerId+'-date--input">	</div>	<div class="row timer-actions">		<button class="button right" id="'+timerId+'-button--edit" onclick="editTimer(\''+timerId+'\')">Edit</button>		<button class="button button--green right hidden" id="'+timerId+'-button--save" onclick="saveEditedTimer(\''+timerId+'\')">Save</button> <button class="button hidden right" id="'+timerId+'-button--canceldelete" onclick="cancelDeleteTimer(\''+timerId+'\')">Cancel Delete</button>	<button class="button button--yellow hidden right" id="'+timerId+'-button--confirmdelete" onclick="confirmDeleteTimer(\''+timerId+'\')">Confirm Delete</button>	<button class="button button--red right" id="'+timerId+'-button--delete" onclick="deleteTimer(\''+timerId+'\')">Delete</button>	</div></div>';
             let timerDomDiv = document.createElement('div');
             timerDomDiv.innerHTML=timerDivHtml;
             var timerContainer = document.getElementById('timer-container');
@@ -346,6 +352,8 @@
             setInputDateTime(timerId,dateTimeObject);
             setTimerTargetDisplay(timerId,dateTimeObject);
         }
+
+
         function setTimerTargetDisplay(timerId,dateTimeObject){
             let dateString = days[ dateTimeObject.getDay() ]
                             + ' ' + dateTimeObject.getDate()
@@ -354,6 +362,7 @@
                             + ' ' + formatAMPM(dateTimeObject);
             document.getElementById(timerId+'-target--display').innerHTML=dateString;
         }
+
 
         function formatAMPM(dateTimeObject) {
             let hours = dateTimeObject.getHours();
@@ -394,11 +403,9 @@
             let hh = ('0' + dateTimeObject.getHours()).slice(-2);
             let mm = ('0' + dateTimeObject.getMinutes()).slice(-2);
             let ss = ('0' + dateTimeObject.getSeconds()).slice(-2);
-
             let yyyy = ('0' + dateTimeObject.getFullYear()).slice(-4);
             let MM = ('0' + (dateTimeObject.getMonth()+1)).slice(-2);
             let dd = ('0' + dateTimeObject.getDate()).slice(-2);
-            
             return hh+mm+ss+yyyy+MM+dd;
         }
 
@@ -434,21 +441,49 @@
 
 
         function editTimer(timerId){
-            //make input field visible
-            document.getElementById(timerId+'--input').classList.remove("hidden");
-            //enable save button
-            document.getElementById(timerId+'-button--save').disabled=false;
+            setTimerMode(timerId, modes.EDIT);
         }
 
 
         function saveEditedTimer(timerId){
-            //make input field invisible
-            document.getElementById(timerId+'--input').classList.add("hidden");
-            //disable save button
-            document.getElementById(timerId+'-button--save').disabled=true;
-            
+            setTimerMode(timerId,modes.DEFAULT);
             //update value in array
-            editTimerInArray(timerId)
+            editTimerInArray(timerId);
+        }
+        
+        
+        function setTimerMode(timerId,timerMode){
+            switch(timerMode){
+                case modes.EDIT:
+                // only save button and input fields are visible
+                document.getElementById(timerId+'--input').classList.remove("hidden");
+                document.getElementById(timerId+'-button--edit').classList.add("hidden");
+                document.getElementById(timerId+'-button--save').classList.remove("hidden");
+                document.getElementById(timerId+'-button--delete').classList.add("hidden");
+                document.getElementById(timerId+'-button--confirmdelete').classList.add("hidden");
+                document.getElementById(timerId+'-button--canceldelete').classList.add("hidden");
+                break;
+                
+                case modes.DELETE:
+                // only confirmDelete and cancelDelete buttons are visible
+                document.getElementById(timerId+'--input').classList.add("hidden");
+                document.getElementById(timerId+'-button--edit').classList.add("hidden");
+                document.getElementById(timerId+'-button--save').classList.add("hidden");
+                document.getElementById(timerId+'-button--delete').classList.add("hidden");
+                document.getElementById(timerId+'-button--confirmdelete').classList.remove("hidden");
+                document.getElementById(timerId+'-button--canceldelete').classList.remove("hidden");
+                break;
+                
+                case modes.DEFAULT:
+                // only delete and edit buttons are visible
+                document.getElementById(timerId+'--input').classList.add("hidden");
+                document.getElementById(timerId+'-button--edit').classList.remove("hidden");
+                document.getElementById(timerId+'-button--save').classList.add("hidden");
+                document.getElementById(timerId+'-button--delete').classList.remove("hidden");
+                document.getElementById(timerId+'-button--confirmdelete').classList.add("hidden");
+                document.getElementById(timerId+'-button--canceldelete').classList.add("hidden");
+                break;
+            }
         }
 
 
@@ -477,6 +512,7 @@
             
             //if timer has expired
             if (timeDifference < 0) {
+                // set countdown display as 'EXPIRED'
                 document.getElementById(timerDisplayId).innerHTML = "EXPIRED";
                 document.getElementById(timerId).classList.add("timer--expired");
             }else{
@@ -486,26 +522,21 @@
 
 
         function deleteTimer(timerId){
-            document.getElementById(timerId+'-button--delete').disabled=false;
-            document.getElementById(timerId+'-button--delete').classList.add("hidden");
-            document.getElementById(timerId+'-button--confirmdelete').classList.remove("hidden");
-            document.getElementById(timerId+'-button--canceldelete').classList.remove("hidden");
+            setTimerMode(timerId, modes.DELETE);
         }
 
 
         function cancelDeleteTimer(timerId){
-            document.getElementById(timerId+'-button--delete').classList.remove("hidden");
-            document.getElementById(timerId+'-button--confirmdelete').classList.add("hidden");
-            document.getElementById(timerId+'-button--canceldelete').classList.add("hidden");
+            setTimerMode(timerId, modes.DEFAULT);
         }
 
 
         function confirmDeleteTimer(timerId){
             deleteTimerFromArray(timerId);
+            
             // Remove timer from dom
             document.getElementById(timerId).remove();
-            //Update url
-            //reinitialize app
+            //Update url and reinitialize the app
             updateWindowUrl();
             initializeApp();
         }
@@ -522,6 +553,7 @@
             return index;
         }
 
+
         function editTimerInArray(timerId){
             // Check if old timer exists in timers array and remove it
             let index = deleteTimerFromArray(timerId);
@@ -534,10 +566,11 @@
             let timerArrayString = document.getElementById(timerId+'-title').innerHTML.trim()+dateTimeString;
             //insert newly edited timer at its original index
             timers.splice(index,0,timerArrayString);
+            
+            //save changed data to url
             updateWindowUrl();
             initializeApp();
         }
-
 
 
         function addNewTimer(){
