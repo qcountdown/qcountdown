@@ -15,7 +15,7 @@
             font-size: 1rem;
             line-height: 1.7em;
 
-            background-color: #EBEFF0;
+            background-color: #dfdcd9;
             color: #000;
         }
         .container{
@@ -23,11 +23,12 @@
             margin: auto;
         }
         .timer{
-            background-color: #ffffff;
-            box-shadow:  2px 2px 8px #aaa, 
-                        -2px -2px 8px #f0f0f0;
+            background: linear-gradient(225deg, #c9c6c3, #efebe8);
+            box-shadow:  -20px 20px 60px #959391, 
+                        20px -20px 60px #ffffff;
+
             padding: 0.5rem 1rem 0.5rem 1rem;
-            border-radius: 0rem 2rem 0.25rem 0rem;
+            border-radius: 0.5rem 2rem 0.5rem 0.5rem;
             margin-top: 1rem;
         }
         .timer-actions{
@@ -39,6 +40,7 @@
             font-family: sans-serif;
             font-size: 2rem;
             font-weight: 300;
+            color: #00BC68;
         }
         .timer-title-container{
             
@@ -52,7 +54,9 @@
             color: #00BC68;
         }
         .timer--expired{
-            background-color: #D0D5D8;
+            background: linear-gradient(225deg, #e69f9f, #ffbdbd);
+            box-shadow:  -20px 20px 60px #ab7777, 
+                        20px -20px 60px #ffebeb;
         }
         .timer--expired .timer-title{
             font-family: sans-serif;
@@ -83,7 +87,10 @@
             padding: 0.25rem;
             margin-bottom: 1rem;
             color: #000;
+            border-radius: 0.25rem;
             font-weight: bold;
+            text-shadow:inset 1px 1px 1px #fff;
+
         }
         input{
             /* width: 100%; */
@@ -101,7 +108,8 @@
             background-color: #00bc6830;
         }
         .button{
-            background-color: #4285f4;
+            /* background-color: #4285f4; */
+            background-color: #059BC8;
             color: #fff;
             padding: 0.25rem 0.5rem;
             min-width: 4rem;
@@ -117,16 +125,18 @@
             opacity: 0.4;
         }
         .button--red {
-            background-color: #ff3547;
+            background-color: #ff073a;
             color: #fff;
         }
         .button--green {
-            background-color: #00c851;
+            background-color: #00BC68;
             color: #fff;
         }
         .button--yellow {
-            background-color: rgb(235, 156, 0);
+            background-color: eb9c00;
             color: #fff;
+            background: rgb(235,156,0);
+background: linear-gradient(45deg, #eb9c00 0%, #b57800 100%);
         }
         .button--whatsapp{
             text-decoration: none;
@@ -139,17 +149,24 @@
         .right{
             float: right;
         }
+
         @media (prefers-color-scheme: dark) {
             body{
-                background-color: #1d1d1d;
+                background-color: #202326;
                 color: #ffffffc0;
-            }
-            .timer{
-                box-shadow: none;
-                background-color: #2c2c2c;
             }
             .app-title{
                 color: #fff;
+            }
+            .timer{
+                background-color: #2c2c2c;
+                background: linear-gradient(225deg, #1d2022, #222529);
+                box-shadow:  -20px 20px 60px #16191b, 
+                            20px -20px 60px #2a2e31;
+            }
+            .timer--expired{
+                background: #f0000010;
+                background: linear-gradient(225deg, #2A2629, #291D1F);
             }
         }
 
@@ -166,7 +183,7 @@
                 <button style="width: 50%;" class="button" onclick="copyUrlToClipboard('timer1')">Copy link</button>
                 <input style="width: 40%;" type="text" id="page-url" style="width: 100%;" placeholder="generatingPageUrl" disabled>
                 <br>
-                <span>The LINK is your timer data. Save the link, save all your timers.</span>
+                <span style="font-family: monospace;">The LINK is your timer DATA. Save the link to save all your timers.</span>
             </div>
             <div>
                 <button style="width: 100%;" class="button button--yellow" onclick="addNewTimer()">+ Add new countdown</button>
