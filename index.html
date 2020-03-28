@@ -2,11 +2,10 @@
 <head>
     <meta charSet="utf-8" />
     <title>qCountdown</title>
-    <meta name="description" content="QuickCountdown. Quickly generate countdown timers from your scripts." />
+    <meta name="description" content="QuickCountdown. Quick countdown timers for busy people." />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="keywords" content="Timer, Countdown">
-    <!-- <link rel="stylesheet" type="text/css" href="milligram.css"> -->
     <style>
         *{box-sizing: border-box;}
         body{
@@ -14,7 +13,6 @@
             color: #6c757d;
             font-size: 1rem;
             line-height: 1.7em;
-
             background-color: #dfdcd9;
             color: #000;
         }
@@ -26,9 +24,9 @@
             position: relative;
             padding: 0.5rem 1rem 0.5rem 1rem;
             margin-top: 1rem;
-            border-radius: 0.5rem 2rem 0.5rem 0.5rem;
-            background: linear-gradient(225deg, #c9c6c3, #efebe8);
-            /* background: #dfdcd9; */
+            border-radius: 0.5rem 2rem 0.5rem 0.5rem;            
+            background: linear-gradient(225deg, #9bd89b, #b8ffb8);
+            color: #00a85d;
         }
         .timer::before{
                 content: '';
@@ -39,8 +37,9 @@
                 top: 0;
                 z-index: -1;
                 border-radius: inherit;
-                box-shadow:  -20px 20px 60px #bebbb8, 
-                        20px -20px 60px #fffdfa;
+                box-shadow:  -20px 20px 60px #92cc92, 
+                            20px -20px 60px #c6ffc6;
+                
             }
         .timer-actions{
             /* background-color: #FAFAFB; */
@@ -51,21 +50,30 @@
             font-family: sans-serif;
             font-size: 2rem;
             font-weight: 300;
-            color: #00a85d;
-        }
-        .timer-title-container{
-            
         }
         .timer-title{
             font-family: sans-serif;
-            color: #00BC68;
         }
-        .timer-target-display{
-            border:1px solid #00BC68;
-            color: #00BC68;
+        
+        .timer--neutral{
+            background: linear-gradient(225deg, #c9c6c3, #efebe8);
+            color: #000;
         }
+        .timer--neutral::before{
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                z-index: -1;
+                border-radius: inherit;
+                box-shadow:  -20px 20px 60px #bebbb8, 
+                        20px -20px 60px #fffdfa;
+        }        
         .timer--expired{
             background: linear-gradient(225deg, #e69f9f, #ffbdbd);
+            color: #ff073a;
         }
         .timer--expired::before{
                 content: '';
@@ -78,21 +86,13 @@
                 border-radius: inherit;
                 box-shadow:  -20px 20px 60px #ab7777, 
                         20px -20px 60px #ffebeb;
-            }
+        }
         .timer--expired .timer-title{
-            font-family: sans-serif;
-            color: #ff073a;
-        }
-        .timer--expired .timer-target-display{
-            border:1px solid #ff073a;
-            color: #ff073a;
-        }
-        .timer--expired .timer-display{
-            color: #ff073a;
+            font-family: sans-serif;            
         }
 
         .timer--new{
-background: linear-gradient(225deg, #b9c5db, #dceaff);
+            background: linear-gradient(225deg, #b9c5db, #dceaff);
         }
         .timer--new::before{
             content: '';
@@ -138,7 +138,7 @@ background: linear-gradient(225deg, #b9c5db, #dceaff);
             display: none;
         }
         .timer-input-display{
-            background-color: #00bc6830;
+            background-color: #00000020;
         }
         .button{
             /* background-color: #4285f4; */
@@ -194,9 +194,25 @@ background: linear-gradient(225deg, #b9c5db, #dceaff);
             .timer{
                 box-shadow: none        ;
                 background-color: #2c2c2c;
-                background: linear-gradient(225deg, #1d2022, #222529);
+                background: linear-gradient(225deg, #1e2520, #232c25);
             }
             .timer::before{
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                z-index: -1;
+                border-radius: inherit;                
+                box-shadow:  -20px 20px 60px #0d100e, 
+                            20px -20px 60px #354238;
+            }
+            .timer--neutral{
+                background: linear-gradient(225deg, #1d2022, #222529);
+                color: #d0d0d0;
+            }
+            .timer--neutral::before{
                 content: '';
                 position: absolute;
                 width: 100%;
@@ -251,7 +267,7 @@ background: linear-gradient(225deg, #b9c5db, #dceaff);
         <div class="row">
             <span class="app-title">qCountdown</span>
         </div>
-        <div class="row timer app-header">
+        <div class="row timer timer--neutral app-header">
             <div>
                 <button style="width: 50%;" class="button" onclick="copyUrlToClipboard('timer1')">Copy link</button>
                 <input style="width: 40%;" type="text" id="page-url" style="width: 100%;" placeholder="generatingPageUrl" disabled>
