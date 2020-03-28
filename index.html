@@ -28,6 +28,7 @@
             margin-top: 1rem;
             border-radius: 0.5rem 2rem 0.5rem 0.5rem;
             background: linear-gradient(225deg, #c9c6c3, #efebe8);
+            /* background: #dfdcd9; */
         }
         .timer::before{
                 content: '';
@@ -38,8 +39,8 @@
                 top: 0;
                 z-index: -1;
                 border-radius: inherit;
-                box-shadow:  -20px 20px 60px #959391, 
-                20px -20px 60px #ffffff;
+                box-shadow:  -20px 20px 60px #bebbb8, 
+                        20px -20px 60px #fffdfa;
             }
         .timer-actions{
             /* background-color: #FAFAFB; */
@@ -91,11 +92,22 @@
         }
 
         .timer--new{
-            background-color: #00BC6820;
-            color: #28a745;
+background: linear-gradient(225deg, #b9c5db, #dceaff);
         }
-        .timer--new .timer-title-container{
-            color: #28a745;
+        .timer--new::before{
+            content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                z-index: -1;
+                border-radius: inherit;
+                box-shadow:  -20px 20px 60px #afbacf, 
+             20px -20px 60px #edfcff;
+        }
+        .timer--new .timer-title{
+            color: #000;
         }
         .row{
             display: block;
@@ -116,10 +128,11 @@
             /* width: 100%; */
             border: none;
             margin-bottom: 5px;
-            border-bottom: 2px solid #00bc68;
+            border-bottom: 2px solid #000;
+            min-height: 1.5rem;
         }
         input:disabled{
-            border-bottom: 2px solid #4285F4;
+            border-bottom: 2px solid #000;
         }
         .hidden{
             display: none;
@@ -196,8 +209,37 @@
                             20px -20px 60px #33383d;
             }
             .timer--expired{
-                background: #f0000010;
                 background: linear-gradient(225deg, #2A2629, #291D1F);
+            }
+            .timer--expired::before{
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                z-index: -1;
+                border-radius: inherit;
+                box-shadow:  -20px 20px 60px #0c0809, 
+                            20px -20px 60px #302223;
+            }
+            .timer--new{
+                background: linear-gradient(225deg, #0a1529, #0c1930);
+            }
+            .timer--new::before{
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                z-index: -1;
+                border-radius: inherit;
+                box-shadow:  -20px 20px 60px #040912, 
+                            20px -20px 60px #122548;
+            }
+            .timer--new .timer-title{
+                color: #fff;
             }
         }
 
@@ -225,7 +267,7 @@
         <div class="row timer timer--new hidden" id="timer-new">
             <div class="row timer-title-container">
                 <span class="timer-title">
-                    Add New Timer
+                    Add New Countdown
                 </span>
             </div>
             <div class="row" id="timer-new--input">
